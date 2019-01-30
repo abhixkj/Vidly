@@ -47,8 +47,7 @@ namespace Vidly.Controllers
             var genres = _context.Genres.ToList();
             var viewModel = new MovieFormViewModel()
             {
-                 Movie=new Models.Movie(),
-                 Genres= genres
+                Genres = genres
             };
 
             return View("MovieForm", viewModel);
@@ -64,10 +63,9 @@ namespace Vidly.Controllers
             }
             else
             {
-                var viewmodel = new MovieFormViewModel()
+                var viewmodel = new MovieFormViewModel(movie)
                 {
-                    Genres = _context.Genres.ToList(),
-                    Movie = movie
+                    Genres = _context.Genres.ToList()
                 };
 
                 return View("MovieForm", viewmodel);
@@ -75,10 +73,19 @@ namespace Vidly.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Save(Movie movie)
         {
-            if (movie.Id==0)
-            {                
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new MovieFormViewModel(movie)
+                {
+                    Genres = _context.Genres.ToList()
+                };
+            }
+
+            if (movie.Id == 0)
+            {
                 movie.DateAdded = DateTime.Now;
                 _context.Movies.Add(movie);
             }
@@ -89,13 +96,13 @@ namespace Vidly.Controllers
                 movieInDB.Name = movie.Name;
                 movieInDB.ReleaseDate = movie.ReleaseDate;
                 movieInDB.NumberInStock = movie.NumberInStock;
-                movieInDB.GenreId = movie.GenreId;               
+                movieInDB.GenreId = movie.GenreId;
             }
 
 
             _context.SaveChanges();
 
-            return RedirectToAction("Index","Movies");
+            return RedirectToAction("Index", "Movies");
         }
 
         //private IEnumerable<Movie> GetMovies()
