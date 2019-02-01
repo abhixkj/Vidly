@@ -17,14 +17,14 @@ namespace Vidly.Dtos
         [Required]
         public byte GenreId { get; set; }
 
-        [Required]
+        public GenreDto Genre { get; set; }
+
         public DateTime DateAdded { get; set; }
 
-        [Required]
         public DateTime ReleaseDate { get; set; }
 
-        [Required]
         [Range(1, 20)]
         public byte NumberInStock { get; set; }
+
     }
 }
